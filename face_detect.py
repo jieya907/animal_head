@@ -2,6 +2,7 @@ import cv2
 import sys
 from random import randint
 
+
 def resize_im(fname, dst_w, dst_h):
 	img = cv2.imread(fname)
 	height, width, channel = img.shape
@@ -18,9 +19,7 @@ def resize_im(fname, dst_w, dst_h):
 	print res.shape
 	return res
 
-
-
-ball_list = ["rabbit_face.png","tiger.png","lion.png","giraffe.png","donkey_headnbg.png","minnie.png","mickey.png","horse.jpg"]
+animal_list = ["rabbit_face.png","tiger.png","lion.png","giraffe.png","donkey_headnbg.png","minnie.png","mickey.png","horse.jpg"]
 # Get user supplied values
 imagePath = sys.argv[1]
 cascPath = "haarcascade_frontalface_default.xml"
@@ -28,41 +27,48 @@ cascPath = "haarcascade_frontalface_default.xml"
 # Create the haar cascade
 faceCascade = cv2.CascadeClassifier(cascPath)
 
-# Read the image
-image = cv2.imread(imagePath)
-gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-
-# Detect faces in the image
-faces = faceCascade.detectMultiScale(
-    gray,
-    scaleFactor=1.15,
-    minNeighbors=7,
-    minSize=(30, 30),
-    flags = cv2.cv.CV_HAAR_SCALE_IMAGE
-)
-
-print "Found {0} faces!".format(len(faces))
-
-# Draw a rectangle around the faces
-for (x, y, w, h) in faces:
-
+def random_resized_animal(x, y, w, h):
 	i = randint(0,7)
 
-	ball = 'head_img/' + ball_list[i]
-	print ball
+	head_image = 'head_img/' + animal_list[i]
 
 	cv2.rectangle(image, (x, y), (x+w, y+h), (0, 255, 0), 2)
-   	res = resize_im(ball, w, h)
-    #replace the area of the face to the ball
-	dh, dw, c = res.shape
-	#print res.shape
-	image[y+(h-dh) : y+(h-dh)+dh, x: x +dw] = res
+	resized_animal = resize_im(head_image, w, h)
+	return resized_animal;
 
 
+def change_face(img_path)
+	# Read the image
+	image = cv2.imread(img_path)
+	gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
+	# Detect faces in the image
+	faces = faceCascade.detectMultiScale(
+	    gray,
+	    scaleFactor=1.15,
+	    minNeighbors=7,
+	    minSize=(30, 30),
+	    flags = cv2.cv.CV_HAAR_SCALE_IMAGE
+	)
 
-cv2.imshow("Faces found", image)
-cv2.waitKey(0)
+	print "Found {0} faces!".format(len(faces))
 
+	# Draw a rectangle around the faces
+	for (x, y, w, h) in faces:
+
+	   	resized_animal = random_resized_animal(x, y, w, h)
+	    #replace the area of the face to the ball
+		dh, dw, c = resized_animal.shape
+		#print res.shape
+		while y+h-dh < 0:
+			resized_animal = random_resized_animal(x, y, w, h)
+			dh, dw, c = resized_animal.shape
+		
+		image[y+(h-dh) : y+(h-dh)+dh, x: x +dw] = resized_animal
+
+	cv2.imshow("Faces found", image)
+	cv2.waitKey(0)
+
+change_face(imagePath)
 
 
