@@ -20,7 +20,7 @@ def resize_im(fname, dst_w, dst_h):
 
 
 
-ball_list = ["rabbit_face.png","tiger.png","lion.png","giraffe.png","donkey_headnbg.png","minnie.png","mickey.png","horse.png"]
+ball_list = ["rabbit_face.png","tiger.png","lion.png","giraffe.png","donkey_headnbg.png","minnie.png","mickey.png","horse.jpg"]
 # Get user supplied values
 imagePath = sys.argv[1]
 cascPath = "haarcascade_frontalface_default.xml"
@@ -48,7 +48,8 @@ for (x, y, w, h) in faces:
 
 	i = randint(0,7)
 
-	ball = ball_list[i]
+	ball = 'head_img/' + ball_list[i]
+	print ball
 
 	cv2.rectangle(image, (x, y), (x+w, y+h), (0, 255, 0), 2)
    	res = resize_im(ball, w, h)
