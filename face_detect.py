@@ -5,7 +5,7 @@ from random import randint
 def resize_im(fname, dst_w, dst_h):
 	img = cv2.imread(fname)
 	height, width, channel = img.shape
-	print img.shape
+	#print img.shape
 	
 	hfactor = float(dst_h) / height * 1.15
 	wfactor = float(dst_w) / width * 1.15
@@ -43,21 +43,21 @@ faces = faceCascade.detectMultiScale(
 
 print "Found {0} faces!".format(len(faces))
 
+
 # Draw a rectangle around the faces
 for (x, y, w, h) in faces:
 
 	i = randint(0,7)
 
 	ball = 'head_img/' + ball_list[i]
-	print ball
 
 	cv2.rectangle(image, (x, y), (x+w, y+h), (0, 255, 0), 2)
    	res = resize_im(ball, w, h)
     #replace the area of the face to the ball
 	dh, dw, c = res.shape
-	#print res.shape
-	image[y+(h-dh) : y+(h-dh)+dh, x: x +dw] = res
+	print (y, h, dh)
 
+	image[y+(h-dh): y+h, x: x +dw] = res
 
 
 
