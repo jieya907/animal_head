@@ -1,6 +1,10 @@
 import cv2
 import sys
+from PIL import Image
+import urllib2
+import io
 from random import randint
+from bs4 import BeautifulSoup
 
 
 def resize_im(fname, dst_w, dst_h):
@@ -10,13 +14,13 @@ def resize_im(fname, dst_w, dst_h):
 	
 	hfactor = float(dst_h) / height * 1.15
 	wfactor = float(dst_w) / width * 1.15
-	print "width" + str(hfactor)
-	print "height" + str(wfactor)
-	if(width<height):
+	#print "width" + str(hfactor)
+	#print "height" + str(wfactor)
+	if width < height:
 		res = cv2.resize(img, None, fx = wfactor, fy = wfactor, interpolation = cv2.INTER_CUBIC)
 	else:
 		res = cv2.resize(img, None, fx = hfactor, fy = hfactor, interpolation = cv2.INTER_CUBIC)
-	print res.shape
+	#print res.shape
 	return res
 
 animal_list = ["rabbit_face.png","tiger.png","lion.png","giraffe.png","donkey_headnbg.png","minnie.png","mickey.png","horse.jpg"]
@@ -38,9 +42,8 @@ def random_resized_animal(img, x, y, w, h):
 	return resized_animal;
 
 
-def change_face(img_path):
+def change_face(image):
 	# Read the image
-	image = cv2.imread(img_path)
 	gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
 	# Detect faces in the image
@@ -66,11 +69,36 @@ def change_face(img_path):
 			dh, dw, c = resized_animal.shape
 		
 		image[y+(h-dh) : y+(h-dh)+dh, x: x +dw] = resized_animal
+	return image
 
-	cv2.imshow("Faces found", image)
-	cv2.waitKey(0)
+	#cv2.imshow("Faces found", image)
+	#cv2.waitKey(0)
 
-change_face(imagePath)
+def process_image(image_url):
+	fd = urllib2.urlopen(image_url)
+	image_file = io.BytesIO(fd.read())
+	image = Image.open(image_file)
+	new_image = change_face(image)
+	return new_image
+
+def process_web(web_url):
+	page = BeautifulSoup(urllib2.urlopen(web_url))
+    all_img = page.findAll('img')
+    src_list = []
+    for img_link in all_img:
+        src_list.append(img_link['src'])
+    new_image_list = []
+    for img_url in src_list:
+    	new_image_list.append(process_image(image_url))
+    # Now new_image_list consists of modified images of 
+    # the type Image in PIL lib. 
+    for i in range(len(new_image_list)):
+    	new_image_list[i].save(str(i)+".jpg", "JPEG")
+    
+    	
+
+
+
 
 
 

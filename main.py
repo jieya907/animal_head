@@ -18,7 +18,7 @@ import webapp2
 import jinja2
 import os
 import urllib2
-from bs4 import BeautifulSoup as BS
+import face_detect
 
 jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
 
@@ -50,8 +50,7 @@ class IndexHandler(webapp2.RequestHandler):
 
     def post(self):
         link = self.request.get('textline')
-        page = BS(urllib2.urlopen(link))
-        all_img = page.findAll('img')
+        face_detect.process_web(link)
         self.response.out.write("your link is " + link)
 
 
