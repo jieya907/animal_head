@@ -28,17 +28,17 @@ cascPath = "haarcascade_frontalface_default.xml"
 faceCascade = cv2.CascadeClassifier(cascPath)
 
 
-def random_resized_animal(x, y, w, h):
+def random_resized_animal(img, x, y, w, h):
 	i = randint(0,7)
 
 	head_image = 'head_img/' + animal_list[i]
 
-	cv2.rectangle(image, (x, y), (x+w, y+h), (0, 255, 0), 2)
+	cv2.rectangle(img, (x, y), (x+w, y+h), (0, 255, 0), 2)
 	resized_animal = resize_im(head_image, w, h)
 	return resized_animal;
 
 
-def change_face(img_path)
+def change_face(img_path):
 	# Read the image
 	image = cv2.imread(img_path)
 	gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
@@ -57,12 +57,12 @@ def change_face(img_path)
 	# Draw a rectangle around the faces
 	for (x, y, w, h) in faces:
 
-	   	resized_animal = random_resized_animal(x, y, w, h)
+	   	resized_animal = random_resized_animal(image, x, y, w, h)
 	    #replace the area of the face to the ball
 		dh, dw, c = resized_animal.shape
 		#print res.shape
 		while y+h-dh < 0:
-			resized_animal = random_resized_animal(x, y, w, h)
+			resized_animal = random_resized_animal(image, x, y, w, h)
 			dh, dw, c = resized_animal.shape
 		
 		image[y+(h-dh) : y+(h-dh)+dh, x: x +dw] = resized_animal
